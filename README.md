@@ -1,3 +1,8 @@
+### https://rickschuurman.github.io
+
+https://rickschuurman.github.io
+
+
 ### 1. Install ruby and jekyll environment
 
 

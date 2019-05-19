@@ -31,7 +31,7 @@ https://github.com/RickSchuurman/mean-example-app
 * Create a EC2 instance with a Docker engine remotely from our computer with Docker Machine.
  
  
-    ``
+    ```bash
      $ docker-machine create 
         --driver amazonec2 
         --amazonec2-access-key <key> 
@@ -39,7 +39,7 @@ https://github.com/RickSchuurman/mean-example-app
         --amazonec2-region <region> 
         --amazonec2-open-port 27017 
         <name instance>
-    ``
+    ```
 
 
   
@@ -59,7 +59,7 @@ Connect your Docker Client to the Docker Engine running on AWS EC2 instance
     $ docker-machine env <name instance>
     ``
     
-    ````
+    ````bash
     export DOCKER_TLS_VERIFY="1"
     export DOCKER_HOST="tcp://**.***.***.**:****"
     export DOCKER_CERT_PATH="../docker-ec2-instance"
@@ -109,7 +109,7 @@ $ docker run -d -p 27017:27017 --name <container name> -v ~/dataMongo:/data/db m
     $ docker-machine ip <name instance>
     ``
     
-    ````
+    ````bash
     **.***.***.56
     ````
 
@@ -181,11 +181,11 @@ For our next step we need to get the frontend running on Docker. We will use NGI
 Docker hub has the required NGINX image, but we will need to add our frontend files to make the complete image.
 
 
-### Build angular project
+### Build Angular project
 
 * Set the correct environment setting for the frontend
 
-    ````
+    ````bash
    pwd: src/environments/environment.prod.ts
     
     export const environment = {
@@ -211,7 +211,7 @@ Docker hub has the required NGINX image, but we will need to add our frontend fi
 
 * To create our NGINX image we will use the Dockerfile in the root of our MEAN-example-app:
 
-    ````
+    ````dockerfile
     FROM nginx
     COPY dist/out /usr/share/nginx/html  
     ````
@@ -252,6 +252,36 @@ Docker hub has the required NGINX image, but we will need to add our frontend fi
     ``
     $ docker logs mean-nginx
     ``
+    
+    
+## Deploy backend on Docker
+
+For deploying the backend we will follow the same steps as for the frontend. We will start out with the default node-8 image and add our needed files to create a new image. 
+Create the following Dockerfile in the backend folder of the mean app:
+
+  ```dockerfile
+    FROM node:8
+    WORKDIR /app
+    
+    ENV JWT_KEY=<insert secret key>
+    ENV MONGO_PW=mean
+    ENV MONGO_URL=<ip adress to mongo>:27017
+    
+    COPY package.json /app
+    RUN npm install
+    
+    COPY . /app
+    
+    CMD node server.js
+    
+    EXPOSE 3000
+   ```
+
+Create the image: `docker build -t mean-node .`
+
+Create the container: `docker run -d -p 3000:3000 --name mean-node node-mean`
+
+Check if the backend is running by visiting: `http://<ip-given-by-docker-machine>:3000/api/posts`
 
 
 ## Glossary
@@ -266,6 +296,7 @@ Docker hub has the required NGINX image, but we will need to add our frontend fi
 | $ docker rm  [container id]       |  Removes one or more running containers                                                   |
 | $ docker rmi  [image name]        |  Removes one or more images                                                               |
 | $ docker-machine ssh [instance]   |  Log into remote machine                                                                  |
+| $ db.dropUser("[user]")           |  Remove user from MongoDb                                                                 |
 
 
 

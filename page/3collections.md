@@ -14,6 +14,8 @@ type: page
 * [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 
 
-### NodeJS
+### Cheat sheets
+
+* [CSS Selectors cheat sheet](https://learn-the-web.algonquindesign.ca/topics/css-selectors-units-cheat-sheet/)
 
 
